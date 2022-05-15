@@ -10,7 +10,7 @@ Official Pytorch Implementation for NICO Challenge
 ## Segmentation 
 * Contributed by JinHeng. Sub Project is to localize the most discriminative region, which can be regarded as the pre-step for training. 
 
-![Results](./src/Results.jpg)
+![Results](./Results.png)
 
 ## Future Version
 * Add Swin Transformer to './training/models.py'
