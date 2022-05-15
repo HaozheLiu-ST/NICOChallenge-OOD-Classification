@@ -1,7 +1,7 @@
 # NICOChallenge-OOD-Classification
 Official Pytorch Implementation for NICO Challenge
 
-## training 
+## Training 
 * Contributed by Haozhe. Sub Project is to train the model for OOD Classifier.
 
 ## Test 
