@@ -1,4 +1,4 @@
-# Robust Representation via Dynamic Feature Aggregation
+# NICO Challenge
 This is an official code for NICO
 
 ## Requirements
