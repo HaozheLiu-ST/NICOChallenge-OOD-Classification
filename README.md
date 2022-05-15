@@ -10,6 +10,8 @@ Official Pytorch Implementation for NICO Challenge
 ## Segmentation 
 * Contributed by JinHeng. Sub Project is to localize the most discriminative region, which can be regarded as the pre-step for training. 
 
+![Results](./src/Results.jpg)
+
 ## Future Version
 * Add Swin Transformer to './training/models.py'
 * Add ‘Fourier-based Framework for Domain Generalization’ to './training/train_func.py'
