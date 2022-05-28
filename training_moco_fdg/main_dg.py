@@ -124,12 +124,6 @@ def main():
 
     preprocess_teacher(model, model_teacher)
 
-    if args.parallel:
-        model = torch.nn.DataParallel(model)
-        model_teacher = torch.nn.DataParallel(model_teacher)
-    model.cuda()
-    model_teacher.cuda()
-
 # |-Log files initilization
     log_file = os.path.join(args.ckpt, "log.txt")
 
@@ -144,6 +138,21 @@ def main():
         args.log_file.write("--------------------------------------------------" + "\n")
     args.log_file.close()
 
+
+
+# |-Resume initilization
+
+    if args.resume:
+        model, optimizer, best_acc1, start_epoch = load_checkpoint(args, model, optimizer)
+        model_teacher = load_checkpoint_teacher(args, model_teacher)
+        print ('load rsumed model successfully!')
+        args.start_epoch = start_epoch
+        
+    if args.parallel:
+        model = torch.nn.DataParallel(model)
+        model_teacher = torch.nn.DataParallel(model_teacher)
+    model.cuda()
+    model_teacher.cuda()
 
 # |-Training initilization
     if args.label_smooth:
@@ -163,16 +172,6 @@ def main():
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.epochs)
         for epoch in range(args.start_epoch):
             scheduler.step()
-
-# |-Resume initilization
-
-    if args.resume:
-        model, optimizer, best_acc1, start_epoch = load_checkpoint(args, model, optimizer)
-        model_teacher = load_checkpoint_teacher(args, model_teacher)
-        print ('load rsumed model successfully!')
-        args.start_epoch = start_epoch
-
-
 
 # |-Data initilization
 
