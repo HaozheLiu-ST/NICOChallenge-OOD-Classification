@@ -250,7 +250,7 @@ class Valid_Cross_Dataset(Dataset):
         self.root = root
         self._use_seg = use_seg
         self._image_transformer = img_transformer
-        self.label_dict = json.load(open('./datasets/'+train_task+'_id_mapping.json', 'r'))
+        self.label_dict = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_task+'_id_mapping.json', 'r'))
 
         self.data = []
         for i in range (len(self.data_oringin)): 
@@ -406,11 +406,11 @@ def get_fourier_train_dataloader(dataset_name, root, batchsize=64, use_seg=True,
 
 def get_fourier_train_dataloader_cross(train_dataset_name, valid_dataset_name, root, batchsize=64, use_seg=True, cfg='pairrandomcrop'):
     if use_seg:
-        data_train = json.load(open('./datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
-        data_test = json.load(open('./datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
+        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
+        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
     else:
-        data_train = json.load(open('./datasets/'+train_dataset_name + '_train_label.json', 'r'))
-        data_test = json.load(open('./datasets/'+valid_dataset_name + '_train_label.json', 'r'))
+        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_label.json', 'r'))
+        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_label.json', 'r'))
 
     data_aug = data_augmentation(cfg)
 
@@ -428,11 +428,11 @@ def get_fourier_train_dataloader_cross(train_dataset_name, valid_dataset_name, r
 def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root, batchsize=32, use_seg=False, cfg='randomcrop'):
     
     if use_seg:
-        data_train = json.load(open('./datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
-        data_test = json.load(open('./datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
+        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
+        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
     else:
-        data_train = json.load(open('./datasets/'+train_dataset_name + '_train_label.json', 'r'))
-        data_test = json.load(open('./datasets/'+valid_dataset_name + '_train_label.json', 'r'))
+        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_label.json', 'r'))
+        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_label.json', 'r'))
 
     data_aug = data_augmentation(cfg)
 
@@ -450,9 +450,9 @@ def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root, batchs
 def get_dataset_train(train_dataset_name, root, batchsize=32, use_seg=False, cfg='randomcrop'):
     
     if use_seg:
-        data = json.load(open('./datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
+        data = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
     else:
-        data = json.load(open('./datasets/'+train_dataset_name + '_train_label.json', 'r'))
+        data = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_label.json', 'r'))
 
     data_aug = data_augmentation(cfg)
 
