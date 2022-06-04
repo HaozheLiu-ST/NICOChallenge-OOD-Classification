@@ -135,7 +135,7 @@ class Valid_Cross_Dataset(Dataset):
         self.data_oringin = data
         self.root = root
         self._image_transformer = img_transformer
-        self.label_dict = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+train_task+'_id_mapping.json', 'r'))
+        self.label_dict = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+train_task+'_id_mapping.json', 'r'))
 
         self.data = []
         for i in range (len(self.data_oringin)):
@@ -160,8 +160,8 @@ class Valid_Cross_Dataset(Dataset):
 
 def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root='/apdcephfs/share_1290796/Datasets/NICO/nico_datasets/', batchsize=32):
     
-    data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
-    data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
+    data_train = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+ train_dataset_name + '_train_with_mask_label.json', 'r'))
+    data_test = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+ valid_dataset_name + '_train_with_mask_label.json', 'r'))
 
     data_aug = get_pair_randomcrop_transformer
 
