@@ -48,22 +48,21 @@ def get_randomcrop_transformer(img_to_tensor=True):
             # transforms.ColorJitter(.4, .4, .4, .4),
             transforms.RandomGrayscale(0.3),
         ])
-def get_pair_randomcrop_transformer(image, mask, deepaug=False, img_to_tensor=True):
-    if not deepaug:
-        # Random crop
-        i, j, h, w = transforms.RandomResizedCrop.get_params(image, scale=(0.8, 1), ratio = (3/4, 4/3))
-        image = TF.resized_crop(image, i, j, h, w, size=(512,512))
-        mask = TF.resized_crop(mask, i, j, h, w, size=(512,512))
+def get_pair_randomcrop_transformer(image, mask, img_to_tensor=True):
+    # Random crop
+    i, j, h, w = transforms.RandomResizedCrop.get_params(image, scale=(0.8, 1), ratio = (3/4, 4/3))
+    image = TF.resized_crop(image, i, j, h, w, size=(512,512))
+    mask = TF.resized_crop(mask, i, j, h, w, size=(512,512))
 
-        # Random horizontal flipping
-        if random.random() > 0.5:
-            image = TF.hflip(image)
-            mask = TF.hflip(mask)
+    # Random horizontal flipping
+    if random.random() > 0.5:
+        image = TF.hflip(image)
+        mask = TF.hflip(mask)
 
-        # Random vertical flipping
-        if random.random() > 0.5:
-            image = TF.vflip(image)
-            mask = TF.vflip(mask)
+    # Random vertical flipping
+    if random.random() > 0.5:
+        image = TF.vflip(image)
+        mask = TF.vflip(mask)
     if img_to_tensor:
         image = aug(image,transforms.Compose([
             transforms.ToTensor(),
@@ -109,44 +108,34 @@ def aug(image, preprocess,aug_prob_coeff=1,mixture_width=3,mixture_depth=-1,aug_
 Dataset 
 """
 class Train_Dataset(Dataset):
-    def __init__(self, data, task='track1', use_seg=False, root='/apdcephfs/share_1290796/Datasets/NICO/', img_transformer=None):
+    def __init__(self, data, task='track1', root='', transformer=None):
         self.data = data
         self._task = task
-        self._use_seg = use_seg
         self.root = root
-        self._image_transformer = img_transformer
+        self.transformer = transformer
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, item):
         img_path = self.root + self.data[item]['image_path']
         label = self.data[item]['label']
+        seg_path = self.root + self.data[item]['image_seg_path']
         if self._task == 'track1':
             domain = self.data[item]['domain']
-        img = Image.open(img_path).convert('RGB')
-
-        if self._use_seg:
-            seg_path = self.root + self.data[item]['image_seg_path']
-            seg_map = Image.open(seg_path)
-            if self._image_transformer!=None:
-                img, seg_map = self._image_transformer(img, seg_map)
-            if self._task == 'track1':
-                return img, seg_map, label, domain
-            return img, seg_map, label
         else:
-            if self._image_transformer!=None:
-                img = self._image_transformer(img)
-            if self._task == 'track1':
-                return img, label, domain
-            return img, label
+            domain = 'None'
+        img = Image.open(img_path).convert('RGB')
+        seg_map = Image.open(seg_path)
+        img, seg_map = self.transformer(img, seg_map, img_to_tensor=False)
+        img= aug(img, transforms.PILToTensor())
+        return img, seg_map, label, domain
+
 class Valid_Cross_Dataset(Dataset):
-    def __init__(self, data, train_task='track1', use_seg=False, img_transformer=None, root='/apdcephfs/share_1290796/Datasets/NICO/nico_datasets/'):
+    def __init__(self, data, train_task='track1', root='', img_transformer=None):
         self.data_oringin = data
-        self._task = train_task
         self.root = root
-        self._use_seg = use_seg
         self._image_transformer = img_transformer
-        self.label_dict = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train_dg_ddp/datasets/'+train_task+'_id_mapping.json', 'r'))
+        self.label_dict = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+train_task+'_id_mapping.json', 'r'))
 
         self.data = []
         for i in range (len(self.data_oringin)):
@@ -162,34 +151,25 @@ class Valid_Cross_Dataset(Dataset):
         label = self.label_dict[label_name]
 
         img = Image.open(img_path).convert('RGB')
-        if self._use_seg:
-            seg_path = self.root + self.data[item]['image_seg_path']
-            seg_map = Image.open(seg_path)
-            if self._image_transformer!=None:
-                img, seg_map = self._image_transformer(img, seg_map)
-            return img, seg_map, label
-        else:
-            if self._image_transformer!=None:
-                img = self._image_transformer(img)
-            return img, label
+        seg_path = self.root + self.data[item]['image_seg_path']
+        seg_map = Image.open(seg_path)
+        img, seg_map = self._image_transformer(img, seg_map)
+        return img, seg_map, label
 
 
-def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root, batchsize=32, use_seg=False, cfg='pairrandomcrop'):
+
+def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root='/apdcephfs/share_1290796/Datasets/NICO/nico_datasets/', batchsize=32):
     
-    if use_seg:
-        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
-        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
-    else:
-        data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+train_dataset_name + '_train_label.json', 'r'))
-        data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/train/datasets/'+valid_dataset_name + '_train_label.json', 'r'))
+    data_train = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
+    data_test = json.load(open('/apdcephfs/share_1290796/waltszhang/NICO_challenge/datasets/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
 
-    data_aug = data_augmentation(cfg)
+    data_aug = get_pair_randomcrop_transformer
 
     random.shuffle(data_test)
-    split_num = int(0.2*len(data_test))
+    split_num = int(0.25*len(data_test))
     data_test = data_test[:split_num]
 
-    train_dataset = Train_Dataset(data_train, train_dataset_name, use_seg, root, data_aug)
-    valid_dataset = Valid_Cross_Dataset(data_test, train_dataset_name, use_seg, root)
+    train_dataset = Train_Dataset(data_train, train_dataset_name, root, data_aug)
+    valid_dataset = Valid_Cross_Dataset(data_test, train_dataset_name, root, data_aug)
 
     return train_dataset, valid_dataset

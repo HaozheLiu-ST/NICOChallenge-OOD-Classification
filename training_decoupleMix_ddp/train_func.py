@@ -1,7 +1,7 @@
 import os
 import random
 import time
-from util import AverageMeter, ProgressMeter, accuracy, warm_update_teacher, get_current_consistency_weight
+from util import AverageMeter, ProgressMeter, accuracy, warm_update_teacher
 
 from torchvision import transforms
 from math import sqrt
@@ -24,13 +24,19 @@ def adjust_learning_rate_ft(optimizer, epoch, args):
             param_group['lr'] = lr
 
 def Sepmixing(image,mask,label,alpha=2.0,p=0.5):
+    """
+    image: torch tensor with shape [N,C,H,W] without normalization and diving 255
+    """
     if alpha > 0:
         lam_fore = np.random.beta(alpha, alpha)
         lam_back = np.random.rand()
     else:
         lam = 1
-
     batch_size = image.size()[0]
+    norm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+    for i in range(batch_size):
+        image[i] = norm(image[i].div(255))
 
     index = torch.randperm(batch_size).cuda()
 
@@ -49,6 +55,9 @@ def Sepmixing(image,mask,label,alpha=2.0,p=0.5):
     return mixed_x, y_a, y_b, lam_fore
 
 def spectrum_decouple_mix(img,y,alpha=2.0, ratio=1.0):
+    """
+    img: torch tensor with shape [N,C,H,W] without normalization and diving 255
+    """
     lam_low = np.random.beta(alpha, alpha)
     lam_high = np.random.rand()
     n, c, h, w = img.size()
@@ -84,9 +93,13 @@ def spectrum_decouple_mix(img,y,alpha=2.0, ratio=1.0):
     else:
         mix_img = lam_low * img + (1 - lam_low)*img[index,:]
     y_shuffle = y.detach()[index]
+
+    norm = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+    for i in range(n):
+        mix_img[i] = norm(mix_img[i].div(255))
+
     return mix_img, y, y_shuffle, lam_low
-
-
 
 def train_dg_pdd(train_loader, model, model_teacher, criterion, optimizer, epoch, args):
     T=10.0

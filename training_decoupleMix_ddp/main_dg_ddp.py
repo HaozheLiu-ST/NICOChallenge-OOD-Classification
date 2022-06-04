@@ -172,9 +172,9 @@ def main_worker(gpu, ngpus_per_node, args):
 # |-Data initilization
 
     if args.track == '2':
-        train_dataset, valid_dataset = get_dataset_train_cross('track2','track1', args.root, args.batch_size, use_seg=True)
+        train_dataset, valid_dataset = get_dataset_train_cross('track2','track1', args.root, args.batch_size)
     else:
-        train_dataset, valid_dataset = get_dataset_train_cross('track1','track2', args.root, args.batch_size, use_seg=True)
+        train_dataset, valid_dataset = get_dataset_train_cross('track1','track2', args.root, args.batch_size)
     train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=(train_sampler is None),
