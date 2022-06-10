@@ -9,8 +9,6 @@ import torch
 import numpy as np
 from math import sqrt
 import random
-import cv2
-from tqdm import tqdm
 import sys
 from torchvision.utils import save_image
 import augmentations
@@ -160,8 +158,8 @@ class Valid_Cross_Dataset(Dataset):
 
 def get_dataset_train_cross(train_dataset_name, valid_dataset_name, root='/apdcephfs/share_1290796/Datasets/NICO/nico_datasets/', batchsize=32):
     
-    data_train = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+ train_dataset_name + '_train_with_mask_label.json', 'r'))
-    data_test = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+ valid_dataset_name + '_train_with_mask_label.json', 'r'))
+    data_train = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+train_dataset_name + '_train_with_mask_label.json', 'r'))
+    data_test = json.load(open('/apdcephfs/share_1290796/Datasets/NICO/dataset_json/'+valid_dataset_name + '_train_with_mask_label.json', 'r'))
 
     data_aug = get_pair_randomcrop_transformer
 

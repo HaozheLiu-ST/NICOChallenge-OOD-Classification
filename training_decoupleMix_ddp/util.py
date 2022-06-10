@@ -1,6 +1,5 @@
 import os
 import re
-import fnmatch
 import torch
 import numpy as np
 
