@@ -16,6 +16,42 @@ def save_checkpoint(state, is_best, epoch, save_path='./'):
             shutil.copyfile(os.path.join(save_path, 'checkpoint.pth.tar'),
                             os.path.join(save_path, 'model_best_in_090_epochs.pth.tar'))
 
+def load_checkpoint(args, model, model_t, optimizer=None, verbose=True):
+
+    # student model checkpoint loading
+    checkpoint = torch.load(args.fine_tune)
+    start_epoch = 0
+    best_acc = 0
+
+    if "epoch" in checkpoint:
+        start_epoch = checkpoint['epoch']
+
+    if "best_acc" in checkpoint:
+        best_acc = checkpoint['best_acc']
+
+    dict_ = {}
+    for k in list(checkpoint['state_dict'].keys()):
+        if 'module' in k:
+            dict_[k[7:]] = checkpoint['state_dict'][k]
+        else:
+            dict_[k] = checkpoint['state_dict'][k]
+
+    model.load_state_dict(dict_, True)
+    model_t.load_state_dict(dict_, True)
+    
+    if optimizer is not None and "optimizer" in checkpoint:
+        optimizer.load_state_dict(checkpoint['optimizer'])
+
+        for state in optimizer.state.values():
+            for k, v in state.items():
+                if isinstance(v, torch.Tensor):
+                    state[k] = v.cuda(args.gpu)
+
+    if verbose:
+        print("=> loading checkpoint '{}' (epoch {})"
+                .format(args.fine_tune, start_epoch))
+
+    return model, model_t, optimizer, best_acc, start_epoch
 
 def load_checkpoint_fdg(args, model, model_t, optimizer=None, verbose=True):
 
@@ -23,7 +59,13 @@ def load_checkpoint_fdg(args, model, model_t, optimizer=None, verbose=True):
     student_path_split = args.resume.split('student')
     resume_path = student_path_split[0]+'teacher'+student_path_split[1]
     checkpoint = torch.load(resume_path)
-    model_t.load_state_dict(checkpoint['state_dict'], False)
+    dict_ = {}
+    for k in list(checkpoint['state_dict'].keys()):
+        if 'module' in k:
+            dict_[k[7:]] = checkpoint['state_dict'][k]
+        else:
+            dict_[k] = checkpoint['state_dict'][k]
+    model_t.load_state_dict(dict_, True)
 
     # student model checkpoint loading
     checkpoint = torch.load(args.resume)
@@ -36,7 +78,14 @@ def load_checkpoint_fdg(args, model, model_t, optimizer=None, verbose=True):
     if "best_acc" in checkpoint:
         best_acc = checkpoint['best_acc']
 
-    model.load_state_dict(checkpoint['state_dict'], False)
+    dict_ = {}
+    for k in list(checkpoint['state_dict'].keys()):
+        if 'module' in k:
+            dict_[k[7:]] = checkpoint['state_dict'][k]
+        else:
+            dict_[k] = checkpoint['state_dict'][k]
+            
+    model.load_state_dict(dict_, True)
 
     if optimizer is not None and "optimizer" in checkpoint:
         optimizer.load_state_dict(checkpoint['optimizer'])
@@ -44,7 +93,7 @@ def load_checkpoint_fdg(args, model, model_t, optimizer=None, verbose=True):
         for state in optimizer.state.values():
             for k, v in state.items():
                 if isinstance(v, torch.Tensor):
-                    state[k] = v.cuda()
+                    state[k] = v.cuda(args.gpu)
 
     if verbose:
         print("=> loading checkpoint '{}' (epoch {})"
@@ -59,13 +108,24 @@ def check_local(args, model, model_teacher, optimizer=None):
         if os.path.exists(file_path):
             args.resume = file_path
     if args.resume!= None:
-        return load_checkpoint_fdg(args,model,model_teacher,optimizer)
+        if args.fine_tune!=None:
+            args.fine_tune = args.resume
+            return load_checkpoint(args,model,model_teacher,optimizer)
+        else:
+            return load_checkpoint_fdg(args,model,model_teacher,optimizer)
     else:
+        if args.fine_tune!=None:
+            return load_checkpoint(args,model,model_teacher,optimizer)
         if args.pretrained != None:
             print ('load pretrained model')
             checkpoint = torch.load(args.pretrained)
-            state_dict = checkpoint['state_dict']
-            model.load_state_dict(state_dict, True)
+            dict_ = {}
+            for k in list(checkpoint['state_dict'].keys()):
+                if 'module' in k:
+                    dict_[k[7:]] = checkpoint['state_dict'][k]
+                else:
+                    dict_[k] = checkpoint['state_dict'][k]
+            model.load_state_dict(dict_, True)
         if args.moco_pretrained != None:
             print ('load pretrained model')
             checkpoint = torch.load(args.moco_pretrained)

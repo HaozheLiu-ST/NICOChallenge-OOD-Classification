@@ -39,22 +39,23 @@ parser.add_argument("--log_freq", type=int, default=500,
                     help="log frequency to file")
 parser.add_argument("--ckpt", default="./ckpts/",
                     help="folder to output checkpoints")
-
+parser.add_argument("--ratio", type=float, default=1.0, help='control foriour range')
 parser.add_argument("--cos_lr", action='store_true',
                     help='use cosine learning rate')
 
 parser.add_argument("--adam", action='store_true',
                     help='use adam optimizer')
-
 parser.add_argument("--adamw", action='store_true',
                     help='use adamw optimizer')
-
-parser.add_argument("--fine_tune", action='store_true',
-                    help='fine_tune validation set')
 
 parser.add_argument("--track",default="1",help='[1/2]')
 
 parser.add_argument("--label_smooth", action='store_true', help='using label smooth')
+
+parser.add_argument("--style_mix", action='store_true', help='use style mix to replace Sepmixing')
+
+parser.add_argument("--fine_tune", default= None, type=str, metavar='PATH',
+                    help='path to load pretrained model and fintune(default: none)')
 
 parser.add_argument("--pretrained", default= None, type=str, metavar='PATH',
                     help='path to load pretrained model (default: none)')
@@ -86,6 +87,7 @@ def main():
 
     print("Use MODEL: {} for training".format(args.arch))
     print("Use Track: {} for training".format(args.track))
+    print("Use Ratio: {} for training".format(args.ratio))
 
     if not os.path.isdir(student_ckpt):
         os.makedirs(student_ckpt)
@@ -140,7 +142,7 @@ def main_worker(gpu, ngpus_per_node, args):
     args.start_epoch = start_epoch
 
     model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
-    model_teacher = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model_teacher)
+    # model_teacher = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model_teacher)
     
     torch.cuda.set_device(args.gpu)
     model.cuda(args.gpu)
