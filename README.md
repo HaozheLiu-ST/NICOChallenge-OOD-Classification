@@ -67,7 +67,7 @@ do
 done
 ```
 
-Then generate an averaging model via greedy search
+* Then generate an averaging model via greedy search
 
 ```CUDA_VISIBLE_DEVICES=1 python model_soup.py \
 -a densenet121 \
