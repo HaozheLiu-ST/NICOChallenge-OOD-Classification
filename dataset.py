@@ -206,9 +206,23 @@ class FDG_Dataset_Seg(Dataset):
         seg_sampled = Image.open(seg_ame_sampled)
         img_sampled, seg_sampled = self.transformer(self.img_size, img_sampled, seg_sampled, img_to_tensor=False)
         return img_sampled, seg_sampled, label_sampled, domain_idx
+class Test_Dataset(Dataset):
+    def __init__(self, data, root='', img_transformer=None):
+        self.data = data
+        self.root = root
+        self._image_transformer = img_transformer
+    def __len__(self):
+        return len(self.data)
+    def __getitem__(self, item):
+        img_path = self.root+self.data[item]['image_path']
+        img_name = self.data[item]['image_name']
+
+        img = Image.open(img_path).convert('RGB')
+        img = self._image_transformer(img)
+        return img_name, img
 
 
-def get_dataset(img_size, train_dataset_name, scheme, use_seg=True ,root='./Datasets/NICO/nico_datasets/', json_path='./dataset_json/'):
+def get_dataset_train(img_size=512, train_dataset_name, scheme, use_seg=True ,root='./Datasets/NICO/nico_datasets/', json_path='./dataset_json/'):
     
     data_train = json.load(open(json_path+train_dataset_name + '_train_with_mask_label.json', 'r'))
     data_aug = data_augmentation(use_seg, img_size)
@@ -227,3 +241,21 @@ def get_dataset(img_size, train_dataset_name, scheme, use_seg=True ,root='./Data
     return train_dataset, valid_dataset
 
 
+def get_dataset_test(args, img_size=512):
+    test_data = json.load(open(args.json_path+args.track + '_test_with_mask_label.json', 'r'))
+
+    if args.cfg=='augmix':
+        data_aug = transforms.Compose([
+            transforms.CenterCrop((image_size, image_size)),
+            transforms.PILToTensor()
+            ])
+    else:
+        data_aug = transforms.Compose([
+            transforms.CenterCrop((img_size, img_size)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            ])
+    test_dataset = Test_Dataset(test_data,data_aug)
+    data_loader_test = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, num_workers=32,
+                                   pin_memory=True, drop_last=False)
+    return data_loader_test

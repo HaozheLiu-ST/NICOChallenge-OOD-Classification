@@ -2,7 +2,6 @@ import os
 import random
 import time
 from util import AverageMeter, ProgressMeter, accuracy, warm_update_teacher, get_current_consistency_weight
-
 from torchvision import transforms
 from math import sqrt
 import numpy as np
@@ -19,7 +18,18 @@ def adjust_learning_rate(optimizer, epoch, args):
 """
 domain generalization proposess
 """
-def Sepmixing(image,mask,label,scheme='fdg',alpha=2.0,p=0.5):
+
+def mix_up(img, y, alpha=2.0):
+    """
+    img: torch tensor with shape [N,C,H,W] with normalization and diving 255
+    """
+    lam_low = np.random.beta(alpha, alpha)
+    n, c, h, w = img.size()
+    index = torch.randperm(n).cuda()
+    mix_img = lam_low * img + (1 - lam_low)*img[index,:]
+    y_shuffle = y.detach()[index]
+    return mix_img, y, y_shuffle, lam_low
+def sepmixing(image,mask,label,scheme='fdg',alpha=2.0,p=0.5):
     """
     if scheme is 'decouple' image: torch tensor with shape [N,C,H,W] without normalization and diving 255
     """
@@ -89,7 +99,7 @@ def spectrum_decouple_mix(img,y,alpha=2.0, ratio=1.0):
         mix_img[i] = norm(mix_img[i].div(255))
 
     return mix_img, y, y_shuffle, lam_low
-def colorful_spectrum_mix_torch(img1, img2, alpha=1.0, ratio=1.0):
+def fourier_spectrum_mix(img1, img2, alpha=1.0, ratio=1.0):
     """Input image size: PIL of [H, W, C]"""
     lam = random.uniform(0, alpha)
 
@@ -158,7 +168,7 @@ def get_fourir_transfer_data(images, mask, target, args):
     target_so_list, target_os_list= [], []
 
     for i in range(B):
-        img_s2o, img_o2s = colorful_spectrum_mix_torch(images_[i], images_s[i], ratio = args.ratio)
+        img_s2o, img_o2s = fourier_spectrum_mix(images_[i], images_s[i], ratio = args.ratio)
         images_so_list.append(img_s2o.view(1, C, H, W))
         images_os_list.append(img_o2s.view(1, C, H, W))
         mask_so_list.append(mask_[i].view(1, 1, H, W))
@@ -201,20 +211,26 @@ def train_decouple(train_loader, model, criterion, optimizer, epoch, args):
 
     for i, data in enumerate(train_loader):
         global_step = epoch * len(train_loader) + ( i + 1 )
-        images, mask, target, _ = data
 
+        if args.use_seg:
+            images, mask, target, _ = data
+        else:
+            images, target, _ = data
 
         # measure data loading time
         data_time.update(time.time() - end)
         if torch.cuda.is_available():
             target = target.cuda(args.gpu)
             images = images.cuda(args.gpu)
-            mask = mask.cuda(args.gpu)
-        
-        if random.random() < 0.5:
-            mixed_x, y_a, y_b, lam = Sepmixing(images,mask,target,scheme=args.scheme)
+            if args.use_seg:
+                mask = mask.cuda(args.gpu)
+        if args.use_seg:
+            if random.random() < 0.5:
+                mixed_x, y_a, y_b, lam = sepmixing(images,mask,target,scheme=args.scheme)
+            else:
+                mixed_x, y_a, y_b, lam = spectrum_decouple_mix(images,target, ratio = args.ratio)
         else:
-            mixed_x, y_a, y_b, lam = spectrum_decouple_mix(images,target, ratio = args.ratio)
+            mixed_x, y_a, y_b, lam = mix_up(images,target)
         # compute output
         # zero grad
         optimizer.zero_grad()
@@ -223,7 +239,6 @@ def train_decouple(train_loader, model, criterion, optimizer, epoch, args):
         scores = model(mixed_x)
         # calculate total loss
         total_loss = lam * criterion(scores, y_a) + (1-lam) * criterion(scores, y_b)
-
 
         # backward
         total_loss.backward()
@@ -283,7 +298,7 @@ def train_fdg(train_loader, model, model_teacher, criterion, optimizer, epoch, a
             mask = mask.cuda(args.gpu)
 
         images, mask, target = get_fourir_transfer_data(images, mask, target, args)
-        mixed_x, y_a, y_b, lam = Sepmixing(images,mask,target,scheme=args.scheme)
+        mixed_x, y_a, y_b, lam = sepmixing(images,mask,target,scheme=args.scheme)
         # compute output
         # zero grad
         optimizer.zero_grad()
@@ -370,7 +385,10 @@ def validate(val_loader, model, criterion, args):
     with torch.no_grad():
         end = time.time()
         for i, data in enumerate(val_loader):
-            images, mask, target = data
+            if args.use_seg:
+                images, mask, target = data
+            else:
+                images, target = data
             images = images.cuda(args.gpu)
             target = target.cuda(args.gpu)
 

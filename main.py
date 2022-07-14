@@ -3,7 +3,7 @@ import os
 import torchvision.models as models
 from copy import deepcopy
 from checkpoint import save_checkpoint, check_local
-from dataset import get_dataset
+from dataset import get_dataset_train
 from train_func import train_fdg, train_decouple, validate
 from util import warm_update
 import torch
@@ -142,14 +142,14 @@ def main_worker(gpu, ngpus_per_node, args):
             
 # |-Data initilization
     if args.track == '2':
-        train_dataset1, valid_dataset1 = get_dataset(int(args.img_size[0]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
-        train_dataset2, valid_dataset2 = get_dataset(int(args.img_size[1]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
-        train_dataset3, valid_dataset3 = get_dataset(int(args.img_size[2]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset1, valid_dataset1 = get_dataset_train(int(args.img_size[0]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset2, valid_dataset2 = get_dataset_train(int(args.img_size[1]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset3, valid_dataset3 = get_dataset_train(int(args.img_size[2]), 'track2', args.scheme, args.use_seg, args.root, json_path=args.json_path)
 
     else:
-        train_dataset1, valid_dataset1 = get_dataset(int(args.img_size[0]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
-        train_dataset2, valid_dataset2 = get_dataset(int(args.img_size[1]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
-        train_dataset3, valid_dataset3 = get_dataset(int(args.img_size[2]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset1, valid_dataset1 = get_dataset_train(int(args.img_size[0]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset2, valid_dataset2 = get_dataset_train(int(args.img_size[1]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
+        train_dataset3, valid_dataset3 = get_dataset_train(int(args.img_size[2]), 'track1', args.scheme, args.use_seg, args.root, json_path=args.json_path)
 
     train_sampler1 = torch.utils.data.distributed.DistributedSampler(train_dataset1)
     train_sampler2 = torch.utils.data.distributed.DistributedSampler(train_dataset2)
