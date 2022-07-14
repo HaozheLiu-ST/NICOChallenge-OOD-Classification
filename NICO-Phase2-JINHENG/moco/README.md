@@ -22,7 +22,7 @@ checkpoints/finetune/224/densenet121_track1_4096_0.03_128/gpus_4_lr_0.03_bs_128_
 ```
 output-path-wide_resnet50_2:
 ```
-checkpoints/finetune/224/wide_resnet_50_track1_4096_0.03_128/gpus_4_lr_0.03_bs_128_epochs_200_path_train/checkpoint_0199.pth.tar
+checkpoints/finetune/224/wide_resnet50_2_track1_4096_0.03_128/gpus_4_lr_0.03_bs_128_epochs_200_path_train/checkpoint_0199.pth.tar
 ```
 output-path-resnet34:
 ```
@@ -44,7 +44,7 @@ bash pretrain_track2_phase2.sh resnet34 path/to/your/data
 ```
 output-path-wide_resnet50_2:
 ```
-checkpoints/finetune/224/wide_resnet_50_track2_4096_0.03_128/gpus_4_lr_0.03_bs_128_epochs_200_path_train/checkpoint_0199.pth.tar
+checkpoints/finetune/224/wide_resnet50_2_track2_4096_0.03_128/gpus_4_lr_0.03_bs_128_epochs_200_path_train/checkpoint_0199.pth.tar
 ```
 output-path-densenet121: 
 ```
