@@ -1,5 +1,6 @@
 # MoCo pretraining
 ## Track 1
+1. densenet121
 ```
 bash pretrain_track1_phase2.sh densenet121 path/to/your/data
 ```
@@ -7,8 +8,12 @@ e.g.,
 ```
 bash pretrain_track1_phase2.sh densenet121 /apdcephfs/share_1290796/Datasets/NICO/nico_datasets
 ```
+2. wide_resnet50_2
 ```
 bash pretrain_track1_phase2.sh wide_resnet50_2 path/to/your/data
+```
+3. resnet34
+```
 bash pretrain_track1_phase2.sh resnet34 path/to/your/data
 ```
 output-path-densenet121: 
@@ -25,9 +30,16 @@ checkpoints/finetune/224/resnet34_track1_4096_0.03_128/gpus_4_lr_0.03_bs_128_epo
 ```
 
 ## Track 2
+1. wide_resnet50_2
 ```
 bash pretrain_track2_phase2.sh wide_resnet50_2 path/to/your/data
+```
+2. densenet121
+```
 bash pretrain_track2_phase2.sh densenet121 path/to/your/data
+```
+3. resnet34
+```
 bash pretrain_track2_phase2.sh resnet34 path/to/your/data
 ```
 output-path-densenet121: 

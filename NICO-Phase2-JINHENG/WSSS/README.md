@@ -10,6 +10,7 @@ output mask:
 ```
 experiments/predictions/nico_track1_r50_test_dim_2048@train@scale=0.5,1.0,1.5,2.0@t=0.55@ccam_inference_crf=4
 ```
+
 # Track2
 ```
 CUDA_VISIBLE_DEVICES=5,6 python3 run_track2.py --data_dir xxx --json_file xxx --ppath xxx
