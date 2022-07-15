@@ -18,13 +18,13 @@ if __name__ == '__main__':
 
     # training
     os.system(
-        f'CUDA_VISIBLE_DEVICES=5,6 python3 train_CCAM_NICO++_track1.py --tag {tag} --data_dir {args.data_dir} --batch_size 32 --pretrained nico_t1 --ppath {args.ppath} --json_file {args.json_file} --alpha 0.25')
+        f'python3 train_CCAM_NICO++_track1.py --tag {tag} --data_dir {args.data_dir} --batch_size 32 --pretrained nico_t1 --ppath {args.ppath} --json_file {args.json_file} --alpha 0.25')
     print()
 
     # inference on train set
     # generate ccam
     os.system(
-        f'CUDA_VISIBLE_DEVICES=5 python3 inference_CCAM_track1.py --tag {tag} --data_dir {args.data_dir} --json_file {args.json_file} --domain {domain} --pretrained no')
+        f'python3 inference_CCAM_track1.py --tag {tag} --data_dir {args.data_dir} --json_file {args.json_file} --domain {domain} --pretrained no')
     print()
     # crf
     experiment_name = tag + f'@{domain}@scale={scales}'

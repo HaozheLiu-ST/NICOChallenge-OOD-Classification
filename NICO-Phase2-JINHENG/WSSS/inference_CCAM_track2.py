@@ -149,12 +149,18 @@ if __name__ == '__main__':
         use_gpu = '0'
 
     the_number_of_gpu = len(use_gpu.split(','))
-    if the_number_of_gpu > 1:
-        log_func('[i] the number of gpu : {}'.format(the_number_of_gpu))
-        model = nn.DataParallel(model)
+    # if the_number_of_gpu > 1:
+    #     log_func('[i] the number of gpu : {}'.format(the_number_of_gpu))
+    #     model = nn.DataParallel(model)
 
-    load_model(model, model_path, parallel=the_number_of_gpu > 1)
-    
+    # load_model(model, model_path, parallel=the_number_of_gpu > 1)
+    ckpt = torch.load(model_path)
+    flag = ckpt['flag']
+    # if the_number_of_gpu > 1:
+    #     model.module.load_state_dict(ckpt['state_dict'])
+    # else:
+    model.load_state_dict(ckpt['state_dict'])
+
     #################################################################################################
     # Evaluation
     #################################################################################################
@@ -179,12 +185,11 @@ if __name__ == '__main__':
         images = images.cuda()
         
         # inferenece
-        _, _, cam = model(images, inference=False)
-        # flag = check_positive(cam.clone())
-        # if flag:
-        #     cam = 1 - cam
+        _, _, cams = model(images, inference=False)
+        if flag:
+            cams = 1 - cams
         # postprocessing
-        cams = F.relu(cam)
+        cams = F.relu(cams)
         # cams = torch.sigmoid(features)
         cams = cams[0] + cams[1].flip(-1)
 

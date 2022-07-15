@@ -74,7 +74,7 @@ parser.add_argument('--alpha', type=float, default=0.25)
 parser.add_argument('--pretrained', type=str, required=True,
                         help='adopt different pretrained parameters, [supervised, mocov2, detco]')
 
-flag = True
+flag = False
 
 if __name__ == '__main__':
     # global flag
@@ -215,7 +215,7 @@ if __name__ == '__main__':
             loss.backward()
             optimizer.step()
 
-            if epoch == 0 and iteration == 600:
+            if epoch == 0 and iteration == 1000:
                 flag = check_positive(ccam)
                 print(f"Is Negative: {flag}")
             if flag:
@@ -265,7 +265,9 @@ if __name__ == '__main__':
         #################################################################################################
         # Evaluation
         #################################################################################################
-        save_model_fn()
+        torch.save({'state_dict': model.module.state_dict() if (the_number_of_gpu > 1) else model.state_dict(),
+                    'flag': flag}, model_path)
+        # save_model_fn()
         log_func('[i] save model')
 
     print(args.tag)

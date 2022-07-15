@@ -28,7 +28,8 @@ class ResNetSeries(nn.Module):
                 checkpoint = torch.load(ppath, map_location="cpu")
                 model.load_state_dict(checkpoint['state_dict'], strict=False)
             else:
-                raise NotImplementedError
+                print('No pretrained parameters loaded!')
+                model = resnet50(pretrained=False)
         else:
             print('No pretrained parameters loaded!')
             model = resnet50(pretrained=False)
