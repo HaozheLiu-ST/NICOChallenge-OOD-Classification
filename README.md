@@ -53,21 +53,26 @@ Obtain json files with
 bash find_data.sh
 ```
 
-## Training WSSS
+## Train WSSS
 We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation.  
-The output semantic masks are used in the next training. 
+The output semantic masks are used in the next training.  
+**Note that when "0,1,2,3" gpus are unused, directly carry "Training Moco V2". **
 
 ### Track1 
 Train models with `bash run_wsss_track1.sh`  
-
 ### Track2
 Train models with `bash run_wsss_track2.sh`
 
-## Data with Mask Preparation
-```
-bash find_data_with_mask.sh
-```
-## Training model with pretrained MOCO V2 
+## Train Moco V2
+### Track1 
+Train models with `bash run_moco_track1.sh`  
+### Track2
+Train models with `bash run_moco_track2.sh`  
+
+## Data with Mask Preparation  
+Generate data jsons with mask by `bash find_data_with_mask.sh`  
+
+## Train final models  
 ### Track1 
 Train models with `bash run_train_track1.sh`
 ### Track2
@@ -77,7 +82,9 @@ Train models with `bash run_train_track2.sh`
 ### Track1 
 Train models with `bash run_ensemble_track1.sh`
 ### Track2
-Train models with `bash run_ensemble_track2.sh`
+Train models with `bash run_ensemble_track2.sh`  
+
+The 'prediction.json' files are generated in './results/track1/' and './results/track2/'
 
 
 Our Members:
