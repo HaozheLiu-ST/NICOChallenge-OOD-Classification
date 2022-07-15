@@ -16,7 +16,7 @@ We prepare the json files which contain the image paths, labels, etc. for the mo
 
 ### Track 1
 ```
-$./data/Track1/
+$./data/
 ├── dg_label_id_mapping.json
 ├── public_dg_0416
 │   ├── train
@@ -31,9 +31,9 @@ $./data/Track1/
 ```
 ### Track 2
 ```
-$./data/Track2/public_ood_0412_nodomainlabel/
+$./data/
 ├── ood_label_id_mapping.json
-│   │ 
+├── public_ood_0412_nodomainlabel
 │   ├── train
 │   │   ├──airplane
 │   │   │   ├── 00b272347bcea2077c2e79449eaf3f1c.jpg
