@@ -2,7 +2,7 @@
 
 
 ## Requirements
-A suitable [conda](https://conda.io/) environment named `pytorch1.11` can be created
+A suitable [conda](https://conda.io/) environment named `pytorch` can be created
 and activated with:
 
 ```
