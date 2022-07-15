@@ -48,8 +48,24 @@ Obtain json files with
 ```
 bash find_data.sh
 ```
+The json files are saved in the `./dataset_json/`
 
 ## Training Baseline (Mix Up)
+We applied resnet34, densenet121 and wide_resnet50_2 as baselines. 
+
+### Track1 
+Train a resnet34 with `bash resnet34_baseline_track1.sh `
+
+Train a densenet121 with `bash densenet121_baseline_track1.sh `
+
+Train a wide_resnet50_2 with ` bash wide_resnet50_2_baseline_track1.sh `
+
+### Track2
+Train a resnet34 with `bash resnet34_baseline_track2.sh `
+
+Train a densenet121 with `bash densenet121_baseline_track2.sh `
+
+Train a wide_resnet50_2 with ` bash wide_resnet50_2_baseline_track2.sh `
 
 ## Training WSSS
 
