@@ -48,10 +48,7 @@ $./data/
 │   │   ├── 00a6d9af238fcbd29748c65b149c9d7b.jpg
 │   │   ├── ...
 ```
-Obtain json files with
-```
-bash find_data.sh
-```
+Obtain json files with `bash find_data.sh`
 
 ## Train WSSS
 We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation.  
