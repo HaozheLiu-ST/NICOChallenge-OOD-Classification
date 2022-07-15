@@ -78,12 +78,6 @@ Train models with `bash run_train_track2.sh`
 
 ## Test 
 ### Track1 
-Train models with `bash run_ensemble_track1.sh`
+Generate the final 'prediction.json' by `bash run_ensemble_track1.sh` in './results/track1/'
 ### Track2
-Train models with `bash run_ensemble_track2.sh`  
-
-The 'prediction.json' files are generated in './results/track1/' and './results/track2/'
-
-
-Our Members:
-Haozhe Liu*, Wentian Zhang*, Jinheng Xie*, Haoqian Wu, Ziqi Zhang, Yuexiang Li, Yawen Huang, Yefeng Zheng
+Generate the final 'prediction.json' by `bash run_ensemble_track2.sh` in './results/track2/'
