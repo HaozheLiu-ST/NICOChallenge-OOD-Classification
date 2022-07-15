@@ -67,9 +67,10 @@ Train models with `bash run_moco_track1.sh`
 Train models with `bash run_moco_track2.sh`  
 
 ## Data with Mask Preparation  
-Generate data jsons with mask by `bash find_data_with_mask.sh`  
+After WSSS models are trained, generate data jsons with mask by `bash find_data_with_mask.sh`  
 
 ## Train final models  
+After WSSS models and MOCO models are trained, carry this step.  
 ### Track1 
 Train models with `bash run_train_track1.sh`
 ### Track2
