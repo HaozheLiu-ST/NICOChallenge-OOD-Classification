@@ -15,8 +15,8 @@ python3 ./pydensecrf-master/setup.py install
 ## Data Preparation
 We prepare the json files which contain the image paths, labels, etc. for the model training.  
 (It is noted that the file structures should be the same with those given in phase I.)  
-The json files are saved in `--json_path`, for example `./dataset_json/`  
-The data and label_id_mapping are put in `--root` path, for example `./data/`:  
+The json files are must saved in **`./dataset_json/`**.  
+The data and label_id_mapping are must put in **`./data/`**:  
 
 ### Track 1
 ```
