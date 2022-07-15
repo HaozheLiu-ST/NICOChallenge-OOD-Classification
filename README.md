@@ -7,7 +7,9 @@ and activated with:
 
 ```
 conda env create -f environment.yaml
-conda activate pytorch1.11
+conda activate pytorch
+unzip pydensecrf-master.zip
+python3 ./pydensecrf-master/setup.py install
 ```
 
 ## Data Preparation
