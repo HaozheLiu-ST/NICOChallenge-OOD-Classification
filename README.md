@@ -52,7 +52,8 @@ bash find_data.sh
 ```
 
 ## Training WSSS
-We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation. 
+We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation.  
+The output semantic masks are used in the next training. 
 
 ### Track1 
 Train models with `bash run_wsss_track1.sh`  
@@ -61,7 +62,6 @@ Train models with `bash run_wsss_track1.sh`
 Train models with `bash run_wsss_track2.sh`
 
 ## Data with Mask Preparation
-
 ```
 bash find_data_with_mask.sh
 ```
