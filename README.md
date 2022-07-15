@@ -11,7 +11,7 @@ conda activate pytorch1.11
 ```
 
 ## Data Preparation
-We prepare the json files which contain the image paths, labels, etc. for the model training. 
+We prepare the json files which contain the image paths, labels, etc. for the model training.  
 (It is noted that the file structures should be the same with those given in phase I.)  
 The json files are saved in `--json_path`, for example `./dataset_json/`  
 The data and label_id_mapping are put in `--root` path, for example `./data/`:  
@@ -55,23 +55,27 @@ bash find_data.sh
 We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation. 
 
 ### Track1 
-Train models with `bash run_wsss_track1.sh `
+Train models with `bash run_wsss_track1.sh`  
 
 ### Track2
-Train models with `bash run_wsss_track2.sh `
+Train models with `bash run_wsss_track2.sh`
 
+## Data with Mask Preparation
 
+```
+bash find_data_with_mask.sh
+```
 ## Training model with pretrained MOCO V2 
 ### Track1 
-Train models with `bash run_train_track1.sh `
+Train models with `bash run_train_track1.sh`
 ### Track2
-Train models with `bash run_train_track2.sh `
+Train models with `bash run_train_track2.sh`
 
 ## Test 
 ### Track1 
-Train models with `bash run_ensemble_track1.sh `
+Train models with `bash run_ensemble_track1.sh`
 ### Track2
-Train models with `bash run_ensemble_track2.sh `
+Train models with `bash run_ensemble_track2.sh`
 
 
 Our Members:
