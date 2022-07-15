@@ -53,7 +53,7 @@ Obtain json files with `bash find_data.sh`
 ## Train WSSS
 We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation.  
 The output semantic masks are used in the next training.  
-**Note that when "0,1,2,3" gpus are unused, directly carry "Training Moco V2".**
+**Note that when "0,1,2,3" gpus are unused, directly carry "Train Moco V2".**
 
 ### Track1 
 Train models with `bash run_wsss_track1.sh`  
