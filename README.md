@@ -9,6 +9,7 @@ and activated with:
 conda env create -f environment.yaml
 conda activate pytorch
 unzip pydensecrf-master.zip
+pip install cython
 python3 ./pydensecrf-master/setup.py install
 ```
 
