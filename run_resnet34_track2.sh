@@ -86,9 +86,9 @@ do
     
     CUDA_VISIBLE_DEVICES=1 python3 evaluation.py \
     --arch resnet34 \
-    --out resnet34_swa_ratio_${i}_bestin90 \
+    --out "resnet34_swa_ratio_${i}_bestin90" \
     --track track2 \
     --cfg mixinginference \
     --save_path './results/' \
-    --model_path './ckpts/Adaptive_Decouple_SWA_from_best_epoch/ratio_${i}_lr_1e-4/NICO-resnet34-track2/model_best_in_090_epochs.pth.tar' ;
+    --model_path "./ckpts/Adaptive_Decouple_SWA_from_best_epoch/ratio_${i}_lr_1e-4/NICO-resnet34-track2/model_best_in_090_epochs.pth.tar" ;
 done
