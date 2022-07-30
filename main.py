@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser(description='PyTorch NICO Training')
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet50',help='[densenet121/resnet34/wide_resnet50_2]')
 parser.add_argument('--epochs', default=90, type=int, metavar='N',help='number of total epochs to run')
 parser.add_argument('--total_epoch', default=200, type=int, metavar='N',help='number of total epochs to run')
+parser.add_argument('-gas', "--gradient_accumulation_steps", type=float, default=1.0, help='control accumulate batch')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',help='manual epoch number (useful on restarts)')
 parser.add_argument('-b', '--batch-size', default=256, type=int,metavar='N',help='mini-batch size (default: 256)',dest='batch_size')
 parser.add_argument('--num_workers', default=64, type=int,help='processings for data loader')
@@ -85,9 +86,15 @@ def main_worker(gpu, ngpus_per_node, args):
                                 world_size=args.world_size, rank=args.rank)
 # |-model initilization
 
-    model = models.__dict__[args.arch](pretrained=False,num_classes=60)
+    if 'preresnet' in args.arch:
+        model = preresnets.models[args.arch](pretrained=False, num_classes=60)
+    else:
+        model = models.__dict__[args.arch](pretrained=False,num_classes=60)
     if args.scheme=='fdg':
-        model_teacher = models.__dict__[args.arch](pretrained=False,num_classes=60)
+        if 'preresnet' in args.arch:
+            model_teacher = preresnets.models[args.arch](pretrained=False,num_classes=60)
+        else:
+            model_teacher = models.__dict__[args.arch](pretrained=False,num_classes=60)
 
     # When using a single GPU per process and per
     # DistributedDataParallel, we need to divide the batch size
