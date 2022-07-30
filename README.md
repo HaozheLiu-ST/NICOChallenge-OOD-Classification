@@ -1,6 +1,10 @@
-# NICOChallenge-OOD-Classification
+# Decoupled Mixup for Out-of-Distribution Visual Recognition ECCV’2022 NICO Challenge
 
 This is the implementation of Jarvis-Tencent-KAUST, who reaches to the 5th in both tracks for NICO Challenge.
+
+![the overview of method](./pipeline.png)  
+
+The overview of the proposed method. The images and their annotations are first decoupled by following context-based decouple and frequency-based manners. Then, the common pattern and trapped features are separately mixed. Finally, the fused images are input to classification models for training.  
 
 ## Requirements
 A suitable [conda](https://conda.io/) environment named `pytorch` can be created
@@ -54,7 +58,7 @@ Obtain json files with `bash find_data.sh`
 
 ## Train WSSS
 We applied resnet50 as baselines to achieve weak-supervised semantic segmenatation.  
-The output semantic masks are used in the next training.  
+The output semantic masks are used for context-based mixup in the next training.  
 
 ### Track1 
 Train models with `bash run_wsss_track1.sh`  
