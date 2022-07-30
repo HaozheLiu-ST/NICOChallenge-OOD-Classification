@@ -232,18 +232,24 @@ def train_decouple(train_loader, model, criterion, optimizer, epoch, args):
         else:
             mixed_x, y_a, y_b, lam = mix_up(images,target)
         # compute output
-        # zero grad
-        optimizer.zero_grad()
+
 
         # forward
         scores = model(mixed_x)
         # calculate total loss
         total_loss = lam * criterion(scores, y_a) + (1-lam) * criterion(scores, y_b)
+        
+        if args.gradient_accumulation_steps>1:
+            total_loss = total_loss / args.gradient_accumulation_steps
 
         # backward
         total_loss.backward()
-        # update
-        optimizer.step()
+
+        if global_step % args.gradient_accumulation_steps == 0: 
+            # update
+            optimizer.step()
+            # zero grad
+            optimizer.zero_grad()
 
         # measure accuracy and record loss
         acc1, acc5 = accuracy(scores, target, topk=(1, 5))
@@ -342,13 +348,20 @@ def train_fdg(train_loader, model, model_teacher, criterion, optimizer, epoch, a
         total_loss = 0.5 * loss_cls + 0.5 * loss_aug + \
                      const_weight * loss_ori_tea + const_weight * loss_aug_tea
 
+
+        if args.gradient_accumulation_steps>1:
+            total_loss = total_loss / args.gradient_accumulation_steps
+
         # backward
         total_loss.backward()
-        # update
-        optimizer.step()
 
-        # update teachers
-        warm_update_teacher(model, model_teacher, 0.9995, global_step)
+        if global_step % args.gradient_accumulation_steps == 0: 
+            # update
+            optimizer.step()
+            # zero grad
+            optimizer.zero_grad()
+            # update teachers
+            warm_update_teacher(model, model_teacher, 0.9995, global_step)
 
         # measure accuracy and record loss
         acc1, acc5 = accuracy(scores, target, topk=(1, 5))

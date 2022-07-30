@@ -192,13 +192,13 @@ class FDG_Dataset_Seg(Dataset):
             domain_idx = random.randint(0, 5)
             img_idx = random.randint(0, len(self.names[domain_idx])-1)
             imgn_ame_sampled = self.root + self.names[domain_idx][img_idx]
-            seg_ame_sampled = self.root + self.seg_maps[domain_idx][img_idx]
+            seg_ame_sampled = self.seg_maps[domain_idx][img_idx]
             label_sampled = self.labels[domain_idx][img_idx]
         else:
             domain_idx = 'None'
             idx = random.randint(0, len(self.data)-1)
             imgn_ame_sampled = self.root + self.data[idx]['image_path']
-            seg_ame_sampled = self.root + self.data[idx]['image_seg_path']
+            seg_ame_sampled = self.data[idx]['image_seg_path']
             label_sampled = self.data[idx]['label']
 
         img_sampled = Image.open(imgn_ame_sampled).convert('RGB')
@@ -223,7 +223,10 @@ class Test_Dataset(Dataset):
 
 def get_dataset_train(img_size, train_dataset_name, scheme, use_seg=True ,root='./data/', json_path='./dataset_json/'):
     
-    data_train = json.load(open(json_path+train_dataset_name + '_train_with_mask_label.json', 'r'))
+    if use_seg:
+        data_train = json.load(open(json_path+train_dataset_name + '_train_with_mask_label.json', 'r'))
+    else:
+        data_train = json.load(open(json_path+train_dataset_name + '_train_label.json', 'r'))
     data_aug = data_augmentation(use_seg, img_size)
 
     random.shuffle(data_train)
