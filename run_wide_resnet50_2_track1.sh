@@ -89,9 +89,9 @@ do
 
     CUDA_VISIBLE_DEVICES=1 python3 evaluation.py \
     --arch wide_resnet50_2 \
-    --out wide_resnet50_2_swa_ratio_${i}_bestin90 \
+    --out "wide_resnet50_2_swa_ratio_${i}_bestin90" \
     --track track1 \
     --cfg mixinginference \
     --save_path './results/' \
-    --model_path './ckpts/Adaptive_Decouple_SWA_from_best_epoch/ratio_${i}_lr_1e-4/NICO-wide_resnet50_2-track1/model_best_in_090_epochs.pth.tar' ;
+    --model_path "./ckpts/Adaptive_Decouple_SWA_from_best_epoch/ratio_${i}_lr_1e-4/NICO-wide_resnet50_2-track1/model_best_in_090_epochs.pth.tar" ;
 done
