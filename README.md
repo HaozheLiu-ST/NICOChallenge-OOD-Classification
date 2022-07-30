@@ -1,5 +1,6 @@
 # NICOChallenge-OOD-Classification
 
+This is the implementation of Jarvis-Tencent-KAUST, who reaches to the 5th in both tracks for NICO Challenge.
 
 ## Requirements
 A suitable [conda](https://conda.io/) environment named `pytorch` can be created
