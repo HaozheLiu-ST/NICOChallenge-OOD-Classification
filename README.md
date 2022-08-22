@@ -2,7 +2,7 @@
 
 This is the implementation of Jarvis-Tencent-KAUST, who reaches to the 5th in both tracks for NICO Challenge.
 
-![the overview of method](./pipeline.png)  
+![the overview of the method](./pipeline.png)  
 
 The overview of the proposed method. The images and their annotations are first decoupled by following context-based decouple and frequency-based manners. Then, the common pattern and trapped features are separately mixed. Finally, the fused images are input to classification models for training.  
 
